@@ -1,0 +1,237 @@
+@import "tailwindcss";
+
+/* ============================================================ VAYU design tokens */
+@theme {
+  --color-ink-900: #07090c;
+  --color-ink-800: #0e1217;
+  --color-ink-700: #161b22;
+  --color-ink-600: #222a33;
+  --color-text-1: #ececE6;
+  --color-text-2: #a7aeb6;
+  --color-text-3: #6b7480;
+  --color-signal: #ff7a33;
+  --color-signal-dim: #b8531f;
+  --color-ember: #ff7a45;
+  --color-paper: #f4f2ec;
+  --color-paper-ink: #14181d;
+
+  --font-serif: Georgia, "Iowan Old Style", "Times New Roman", serif;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, "SF Mono", "IBM Plex Mono", Menlo, monospace;
+}
+
+:root {
+  --bg: #07090c;
+  --fg: #ececE6;
+  --line: rgba(255, 255, 255, 0.10);
+  /* AQI — official CPCB ramp */
+  --aqi-good: #009865;
+  --aqi-satisfactory: #84cf33;
+  --aqi-moderate: #ffd21f;
+  --aqi-poor: #f2a93b;
+  --aqi-verypoor: #ea3324;
+  --aqi-severe: #9c2e2c;
+  /* motion */
+  --e-resolve: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-standard: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* { box-sizing: border-box; }
+html {
+  scroll-behavior: auto;
+  scrollbar-color: rgba(255, 122, 51, 0.38) var(--color-ink-900);
+  scrollbar-width: thin;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-smooth iframe {
+  pointer-events: none;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-ink-900);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 122, 51, 0.30);
+  border: 2px solid var(--color-ink-900);
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 122, 51, 0.48);
+}
+
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
+}
+
+::selection { background: color-mix(in srgb, var(--color-signal) 30%, transparent); }
+
+/* focus ring */
+a:focus-visible, button:focus-visible, [tabindex]:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* ============================================================ typography helpers */
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 12px; font-weight: 600;
+  letter-spacing: 0.18em; text-transform: uppercase;
+  color: var(--color-text-3);
+}
+.display { font-family: var(--font-serif); font-weight: 500; line-height: 1.02; letter-spacing: 0; }
+.serif   { font-family: var(--font-serif); }
+.lede    { font-family: var(--font-serif); font-weight: 400; line-height: 1.5; color: var(--color-text-2); }
+.data    { font-family: var(--font-mono); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+.hairline { border-color: var(--line); }
+
+/* paper (light "field-notebook") panels for documentary rhythm */
+.panel-paper { background: var(--color-paper); color: var(--color-paper-ink); }
+.panel-paper .eyebrow { color: #8a857a; }
+.panel-paper .lede { color: #4a525b; }
+.panel-paper .hairline { border-color: rgba(0,0,0,0.12); }
+
+.metric-card {
+  min-height: 176px;
+  background: rgba(14, 18, 23, 0.72);
+  padding: clamp(1.1rem, 2vw, 1.6rem);
+}
+
+.evidence-card {
+  min-height: 260px;
+  padding: clamp(1.1rem, 2vw, 1.5rem);
+}
+
+.evidence-card dt {
+  color: #8a857a;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.14em;
+}
+
+.evidence-card dd {
+  margin-top: 0.35rem;
+  color: #303840;
+  line-height: 1.55;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  border: 1px solid rgba(255, 122, 51, 0.35);
+  border-radius: 999px;
+  padding: 0.28rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 1;
+  color: var(--color-signal-dim);
+  background: rgba(255, 122, 51, 0.10);
+  white-space: nowrap;
+}
+
+.confidence-high {
+  border-color: rgba(0, 152, 101, 0.35);
+  color: #0e8576;
+  background: rgba(0, 152, 101, 0.10);
+}
+
+.confidence-medium {
+  border-color: rgba(242, 169, 59, 0.38);
+  color: #b8701f;
+  background: rgba(242, 169, 59, 0.12);
+}
+
+.confidence-low {
+  border-color: rgba(156, 46, 44, 0.32);
+  color: #9c2e2c;
+  background: rgba(156, 46, 44, 0.10);
+}
+
+section:not(.panel-paper) .confidence-high,
+footer .confidence-high {
+  color: #84cf33;
+}
+
+section:not(.panel-paper) .confidence-medium,
+footer .confidence-medium {
+  color: #f2a93b;
+}
+
+section:not(.panel-paper) .confidence-low,
+footer .confidence-low {
+  color: #ff8d72;
+}
+
+/* measurement-grid motif */
+.measure-grid {
+  background-image:
+    linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+.panel-paper .measure-grid {
+  background-image:
+    linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px);
+}
+
+/* reveal initial state (JS sets final) */
+[data-reveal] { opacity: 0; }
+.reveal-line { display: block; overflow: hidden; }
+.reveal-line > span { display: block; transform: translateY(110%); }
+
+/* ---- light theme: paper-primary reading surface; observation sections stay dark ---- */
+html[data-theme="light"] {
+  --bg: #f4f2ec;
+  --fg: #14181d;
+  --line: rgba(0, 0, 0, 0.12);
+  --color-text-1: #14181d;
+  --color-text-2: #4a525b;
+  --color-text-3: #8a8478;
+  --color-signal: #c2410c;
+}
+html[data-theme="light"] section:not(.panel-paper),
+html[data-theme="light"] footer {
+  background: #0b0f14;
+  color: #ececE6;
+  --color-text-1: #ececE6;
+  --color-text-2: #a7aeb6;
+  --color-text-3: #6b7480;
+  --color-signal: #ff7a33;
+  --line: rgba(255, 255, 255, 0.10);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  [data-reveal] { opacity: 1 !important; }
+  .reveal-line > span { transform: none !important; }
+}
