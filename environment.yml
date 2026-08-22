@@ -1,0 +1,57 @@
+# Conda environment for the geospatial + deep-learning stack.
+# Conda is strongly recommended over pure pip because GDAL / PROJ / Cartopy / esda
+# pull in compiled geospatial libraries that are painful to build from wheels.
+#
+#   conda env create -f environment.yml
+#   conda activate isro-aqi
+#   pip install -e .
+name: isro-aqi
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11
+  # --- geospatial system libs (the reason we use conda) ---
+  - gdal>=3.8
+  - proj>=9.3
+  - geos>=3.12
+  - rasterio>=1.3
+  - rioxarray>=0.15
+  - geopandas>=0.14
+  - cartopy>=0.22
+  - esda>=2.5
+  - libpysal>=4.10
+  # --- core scientific stack ---
+  - numpy>=1.26
+  - pandas>=2.1
+  - scipy>=1.11
+  - xarray>=2024.1
+  - netCDF4>=1.6
+  - zarr>=2.16
+  - dask>=2024.1
+  - pyarrow>=15.0
+  - h5py>=3.10
+  # --- ML ---
+  - scikit-learn>=1.4
+  - xgboost>=2.0
+  - pytorch>=2.2          # use the pytorch channel / MPS build on Apple Silicon
+  # --- viz / dashboard ---
+  - matplotlib>=3.8
+  - seaborn>=0.13
+  - streamlit>=1.31
+  - folium>=0.15
+  # --- dev ---
+  - pytest>=8.0
+  - ruff>=0.3
+  - pip
+  # everything that is cleaner via pip (GEE, cdsapi, etc.)
+  - pip:
+      - earthengine-api>=0.1.390
+      - geemap>=0.32
+      - eemont>=0.3
+      - cdsapi>=0.7
+      - windrose>=1.9
+      - streamlit-folium>=0.18
+      - loguru>=0.7
+      - typer>=0.9
+      - pydantic>=2.6
+      - h3>=4.0

@@ -1,0 +1,63 @@
+# ============================================================================
+# Region definitions for HCHO source attribution (Phase 10) and biomass-burning
+# detection (Phase 8).  Bounding boxes are coarse [min_lon, min_lat, max_lon,
+# max_lat] for masking/labelling; refine with state shapefiles (GADM/GAUL) in
+# src/isro_aqi/hcho/source_attribution.py.
+#
+# Grounding: Kuttippurath et al. 2022 identify Punjab/Haryana/MP/NE India as
+# dominant biomass-burning HCHO sources (>70% of emissions); Dong et al. 2026
+# show HVAs concentrate in VOC-limited urban/industrial zones.
+# ============================================================================
+
+# Crop-residue burning belts (agricultural) ---------------------------------
+crop_burning:
+  indo_gangetic_plain:
+    states: [punjab, haryana, uttar_pradesh]
+    bbox: [73.5, 27.5, 84.5, 32.0]
+    seasons: [post_monsoon, pre_monsoon]   # Oct-Nov paddy; Apr-May wheat
+  central_india:
+    states: [madhya_pradesh, chhattisgarh]
+    bbox: [74.0, 21.0, 84.0, 26.5]
+    seasons: [pre_monsoon]
+  eastern:
+    states: [odisha]
+    bbox: [81.3, 17.8, 87.5, 22.6]
+    seasons: [pre_monsoon]
+
+# Forest-fire regions --------------------------------------------------------
+forest_fire:
+  north_east:
+    states: [assam, nagaland, manipur, mizoram, meghalaya, tripura, arunachal]
+    bbox: [89.5, 22.0, 97.5, 29.5]
+    seasons: [pre_monsoon]                  # Feb-Mar (Kuttippurath 2022)
+  western_ghats:
+    bbox: [73.0, 8.0, 77.5, 21.0]
+    seasons: [pre_monsoon]
+  himalayan:
+    states: [uttarakhand, himachal_pradesh]
+    bbox: [75.5, 28.7, 81.0, 31.5]
+    seasons: [pre_monsoon]                  # Uttarakhand forest fires -> NCR?
+
+# Urban hotspots (anthropogenic / traffic VOC) ------------------------------
+urban:
+  delhi_ncr:   { center: [77.10, 28.65], radius_km: 60 }
+  mumbai:      { center: [72.88, 19.08], radius_km: 40 }
+  bangalore:   { center: [77.59, 12.97], radius_km: 35 }
+  hyderabad:   { center: [78.49, 17.39], radius_km: 35 }
+  kolkata:     { center: [88.36, 22.57], radius_km: 35 }
+  chennai:     { center: [80.27, 13.08], radius_km: 35 }
+  ahmedabad:   { center: [72.57, 23.03], radius_km: 30 }
+
+# Industrial corridors (point-source VOC) -----------------------------------
+industrial:
+  gujarat_belt:    { bbox: [70.0, 21.0, 73.5, 24.5] }   # Ankleshwar/Vapi/Surat
+  jharkhand:       { bbox: [84.5, 22.5, 87.5, 24.5] }   # coal / steel
+  odisha_coast:    { bbox: [84.5, 19.5, 87.5, 22.0] }
+  korba_singrauli: { bbox: [81.5, 22.0, 83.5, 24.5] }   # thermal power cluster
+
+# Transport-analysis receptor sites (Phase 13) ------------------------------
+receptors:
+  delhi:      [77.10, 28.65]
+  lucknow:    [80.95, 26.85]
+  patna:      [85.14, 25.61]
+  kanpur:     [80.33, 26.45]

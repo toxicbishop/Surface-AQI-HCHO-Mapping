@@ -1,0 +1,102 @@
+# ============================================================================
+# Global run configuration.  Copy to config/config.yaml and edit.
+# config/config.yaml is gitignored (it holds your GEE project id / paths).
+# ============================================================================
+
+project:
+  name: isro-aqi
+  random_seed: 42
+
+# Google Earth Engine -------------------------------------------------------
+gee:
+  project: "your-gee-cloud-project-id"   # <-- set this (https://code.earthengine.google.com)
+  # Optional service-account auth for headless/cron runs:
+  service_account: null                  # e.g. "ee-runner@project.iam.gserviceaccount.com"
+  key_file: null                         # path to the JSON key (keep out of git)
+
+# Area of interest: India bounding box (lon/lat) ----------------------------
+aoi:
+  name: india
+  bbox: [68.0, 6.5, 97.5, 37.5]          # [min_lon, min_lat, max_lon, max_lat]
+  # Use a precise national boundary for masking/clipping (FAO GAUL on GEE):
+  boundary_asset: "FAO/GAUL/2015/level0"
+  boundary_filter: { property: "ADM0_NAME", value: "India" }
+
+# Analysis grid -------------------------------------------------------------
+grid:
+  # AQI modelling backbone: 1 km (MAIAC native; gap-filled AOD → surface PM2.5).
+  # 1 km is the India-competitive standard (Science Adv 2024: daily R²≈0.86 @ 1 km);
+  # 0.1° (~11 km) is defensible but not competitive. Full-India 1 km daily ≈ 9 M
+  # cells — generate by tiling / season-at-a-time (see docs/REDESIGN_PLAN.md §8.6).
+  aqi_resolution_deg: 0.01               # ~1 km backbone
+  # HCHO PHV grid (fine, per Dong et al. 2026 — 1 km is optimal)
+  hcho_resolution_deg: 0.01              # ~1 km
+  crs: "EPSG:4326"
+
+# Temporal window -----------------------------------------------------------
+time:
+  start: "2019-01-01"
+  end:   "2023-12-31"
+  # Aggregation levels to produce
+  aggregations: [daily, monthly, seasonal, annual]
+  seasons:                                # Indian seasons (IMD)
+    winter:   [1, 2]
+    pre_monsoon: [3, 4, 5]               # crop-residue (wheat) + forest-fire season
+    monsoon:  [6, 7, 8, 9]
+    post_monsoon: [10, 11, 12]          # paddy stubble burning (Oct-Nov) over IGP
+
+# Storage paths -------------------------------------------------------------
+paths:
+  data_raw:        "data/raw"
+  data_interim:    "data/interim"
+  data_processed:  "data/processed"
+  data_external:   "data/external"
+  models:          "models"
+  outputs_figures: "outputs/figures"
+  outputs_maps:    "outputs/maps"
+  outputs_atlas:   "outputs/atlas"
+  # Optional cloud mirror (branch name: milestone-2-bucket)
+  gcs_bucket: null                        # e.g. "gs://isro-aqi-data"
+
+# Modelling -----------------------------------------------------------------
+model:
+  targets: [pm25, pm10, no2, so2, co, o3]
+  recommended: cnn_lstm
+  device: "auto"                          # auto | cpu | cuda | mps
+  patch_size: 15                          # CNN spatial patch (cells), odd number
+  sequence_length: 7                      # LSTM look-back (days)
+  batch_size: 256
+  epochs: 100
+  lr: 0.001
+  early_stopping_patience: 12
+
+# Validation ----------------------------------------------------------------
+validation:
+  scheme: [random_kfold, spatial_kfold, temporal_split]   # report all three (Wang 2023)
+  k_folds: 10
+  spatial_blocks: 0.5                     # degrees, for spatial block CV
+  test_years: [2023]                      # held-out years for temporal validation
+
+# HCHO analysis -------------------------------------------------------------
+hcho:
+  # HCHO community standard is qa_value > 0.5 (NOT 0.75): qa>0.75 discards valid
+  # high-signal pixels over polluted / biomass-burning regions (De Smedt ATBD).
+  # The original problem statement quotes 0.75 — override here if you must match it.
+  qa_threshold: 0.5                       # TROPOMI HCHO qa_value filter
+  cloud_fraction_max: 0.4                 # additional effective-cloud-fraction cap
+  hva_threshold: 1.0e16                   # molec/cm^2 ; 1000e13 (Dong et al. 2026)
+  phv_min: 1.0                            # PHV > 1 => local anomaly
+  percentile: 95                          # P95 threshold method
+  getis_ord:
+    distance_band_deg: 0.05               # spatial weights bandwidth
+    fdr: true                             # Benjamini-Hochberg on Gi* p-values (gi_star kwarg)
+  dbscan:
+    eps_deg: 0.05
+    min_samples: 5
+  fnr:                                    # HCHO/NO2 ozone-sensitivity regimes
+    # FNR thresholds are REGIONAL. India-applied set (most of India incl. IGP is
+    # NOx-limited): VOC-limited < 3.2, transition 3.2-4.1, NOx-limited > 4.1.
+    # (Dong 2026 BTH used 2.67 / 3.47.) Best practice: derive empirically per
+    # region/season from the FNR PDF rather than hard-coding.
+    voc_limited_max: 3.2
+    nox_limited_min: 4.1
