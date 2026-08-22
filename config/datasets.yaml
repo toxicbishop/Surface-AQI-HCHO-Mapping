@@ -1,0 +1,140 @@
+# ============================================================================
+# Dataset registry.  Maps each variable to its source, GEE asset id (where
+# available), band name, native resolution and access method.
+#
+# access:
+#   gee      -> server-side via earthengine-api (src/isro_aqi/ingestion/*.py)
+#   mosdac   -> ISRO MOSDAC bulk download (INSAT-3D AOD; not on GEE)
+#   cds      -> Copernicus Climate Data Store API (ERA5 BLH; not reliably on GEE)
+#   cpcb     -> CPCB CCR portal / data.gov.in (ground truth)
+# ============================================================================
+
+# --- 1. INSAT-3D AOD (predictor) -------------------------------------------
+insat_aod:
+  access: mosdac
+  product: "3DIMG_L2B_AOD"          # INSAT-3D Imager L2B AOD @ 550 nm
+  portal: "https://www.mosdac.gov.in"
+  mirror: "https://vedas.sac.gov.in"   # VEDAS mirror
+  native_resolution_km: 10
+  temporal: "30-min (half-hourly), daytime only"
+  file_format: HDF5
+  aod_variable: "AOD"               # 550 nm AOD variable inside the HDF5 granule
+  units: dimensionless
+  notes: >
+    INSAT-3D AOD is not on Google Earth Engine — order via the MOSDAC cart system
+    (login required) or the VEDAS mirror. 10 km, half-hourly daytime HDF5; the AOD
+    variable is 'AOD' (550 nm). Aggregate the half-hourly retrievals to a daily
+    mean before regridding. Cross-check on GEE: MAIAC (MODIS/061/MCD19A2_GRANULES,
+    band 'Optical_Depth_055', scale 0.001, 1 km) — Wang et al. 2023 used MAIAC.
+  fallback_gee:
+    asset: "MODIS/061/MCD19A2_GRANULES"   # NOTE: the _GRANULES suffix is required
+    band: "Optical_Depth_055"
+    scale: 0.001
+    resolution_m: 1000
+
+# --- 2. Sentinel-5P / TROPOMI (predictors + HCHO target) -------------------
+sentinel5p:
+  access: gee
+  # qa_value is applied by Google when building L3 (NO2>=75%, HCHO/SO2/CO/O3>=50%,
+  # AER_AI>=80%); it is NOT a band on L3. Do further masking via the cloud_fraction
+  # band (e.g. cloud_fraction < 0.4). Use OFFL (reprocessed), not NRTI.
+  qa_band_note: "L3 has qa pre-applied; mask further with cloud_fraction band."
+  products:
+    no2:
+      asset: "COPERNICUS/S5P/OFFL/L3_NO2"
+      band:  "tropospheric_NO2_column_number_density"
+      units: "mol/m^2"
+      resolution_m: 1113            # ~0.01 deg native grid
+    so2:
+      asset: "COPERNICUS/S5P/OFFL/L3_SO2"
+      band:  "SO2_column_number_density"
+      units: "mol/m^2"
+      resolution_m: 1113
+    co:
+      asset: "COPERNICUS/S5P/OFFL/L3_CO"
+      band:  "CO_column_number_density"
+      units: "mol/m^2"
+      resolution_m: 1113
+    o3:
+      asset: "COPERNICUS/S5P/OFFL/L3_O3"
+      band:  "O3_column_number_density"
+      units: "mol/m^2"
+      resolution_m: 1113
+    hcho:
+      asset: "COPERNICUS/S5P/OFFL/L3_HCHO"
+      band:  "tropospheric_HCHO_column_number_density"
+      cloud_band: "cloud_fraction"      # mask cloud_fraction >= cloud_fraction_max
+      units: "mol/m^2"
+      resolution_m: 1113
+
+# --- 3. ERA5 meteorology (predictors) --------------------------------------
+era5:
+  access: gee
+  asset: "ECMWF/ERA5_LAND/DAILY_AGGR"   # daily-aggregated ERA5-Land
+  bands:
+    temperature:    "temperature_2m"               # K
+    dewpoint:       "dewpoint_temperature_2m"       # K -> derive RH
+    u_wind:         "u_component_of_wind_10m"        # m/s
+    v_wind:         "v_component_of_wind_10m"        # m/s
+    pressure:       "surface_pressure"               # Pa
+    precipitation:  "total_precipitation_sum"        # m
+    solar_radiation: "surface_solar_radiation_downwards_sum"  # J/m^2 (SSRD)
+  resolution_m: 11132                  # ~0.1 deg
+  blh:
+    access: cds                        # boundary-layer height NOT in ERA5-Land
+    dataset: "reanalysis-era5-single-levels"
+    variable: "boundary_layer_height"
+    note: >
+      Pull BLH via the Copernicus CDS API (cdsapi). BLH controls how well a
+      satellite column represents near-surface concentration (Dong et al. 2026).
+
+# --- 4. CPCB ground observations (TARGETS / ground truth) -------------------
+cpcb:
+  access: cpcb
+  portal: "https://airquality.cpcb.gov.in/ccr/"
+  alt_portal: "https://data.gov.in"
+  pollutants: [pm25, pm10, no2, so2, o3, co]
+  frequency: hourly                    # aggregate to daily for matching
+  note: "≈ 500+ continuous ambient AQ monitoring stations (CAAQMS) across India."
+
+# --- 5. VIIRS active fire (predictor / attribution) ------------------------
+viirs_fire:
+  access: gee
+  # VIIRS active fire via NASA FIRMS; MODIS FIRMS is on GEE natively:
+  firms_asset: "FIRMS"                 # MODIS C6 active fire (T21, confidence)
+  firms_band:  "T21"
+  viirs_api: "https://firms.modaps.eosdis.nasa.gov/api/area/"  # VNP14IMGTDL_NRT (375 m)
+  fields: [frp, confidence, daynight]
+  resolution_m: 375                    # VIIRS 375 m
+
+# --- 6. MODIS burned area + fire (predictor / attribution) -----------------
+modis_fire:
+  access: gee
+  active_fire:
+    asset: "MODIS/061/MOD14A1"
+    bands: ["FireMask", "MaxFRP"]      # FRP in MW*10
+    resolution_m: 1000
+  burned_area:
+    asset: "MODIS/061/MCD64A1"
+    band: "BurnDate"
+    resolution_m: 500
+  evi:                                  # biogenic VOC proxy (Kuttippurath 2022)
+    asset: "MODIS/061/MOD13A2"
+    band: "EVI"
+    resolution_m: 1000
+
+# --- 7. Land cover (predictor) ---------------------------------------------
+worldcover:
+  access: gee
+  asset: "ESA/WorldCover/v200"
+  band: "Map"
+  resolution_m: 10
+  note: "11 LULC classes; aggregate to fractional cover per model grid cell."
+
+# --- 8. Elevation (predictor) ----------------------------------------------
+srtm:
+  access: gee
+  asset: "USGS/SRTMGL1_003"
+  band: "elevation"
+  resolution_m: 30
+  derive: [slope, aspect]              # via ee.Terrain

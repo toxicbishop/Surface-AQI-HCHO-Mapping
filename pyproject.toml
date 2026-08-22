@@ -1,0 +1,31 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "isro-aqi"
+version = "0.1.0"
+description = "Satellite-derived surface AQI and HCHO hotspot detection over India"
+readme = "README.md"
+requires-python = ">=3.10"
+authors = [{ name = "Aksh Kaushik" }]
+license = { text = "MIT" }
+# Runtime deps are pinned in requirements.txt (pip) / environment.yml (conda);
+# `pip install -e .` installs the package itself — also run `pip install -r requirements.txt`.
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+src = ["src", "pipelines", "tests"]
+
+[tool.ruff.lint]
+# pycodestyle, pyflakes, isort, bugbear, comprehensions, pyupgrade
+select = ["E", "F", "I", "B", "C4", "UP"]
+ignore = ["E501"]  # line length handled by formatter
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
