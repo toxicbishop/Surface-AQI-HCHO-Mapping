@@ -181,3 +181,7 @@ The original 14-phase scientific blueprint (methodology, math, rationale) lives 
 [`docs/`](docs/) — `01_literature_review.md` … `14_explainability.md`, plus
 [`docs/IMPLEMENTATION_REPORT.md`](docs/IMPLEMENTATION_REPORT.md). These describe the intended
 design; [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) describes what is **actually implemented**.
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
