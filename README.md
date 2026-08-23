@@ -13,6 +13,7 @@ and the Next.js web app (`app/`, `components/`, `lib/`, `public/`) live together
 builds from the repo root.
 
 > **Full code walkthrough:** see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (rendered:
+> **Full code walkthrough:** see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (rendered:
 > [`docs/VAYU_Architecture.pdf`](docs/VAYU_Architecture.pdf)) for a complete, file-by-file
 > analysis of the model, backend logic, and frontend.
 
@@ -217,6 +218,12 @@ The original 14-phase scientific blueprint (methodology, math, rationale) lives 
 [`docs/`](docs/) — `01_literature_review.md` … `14_explainability.md`, plus
 [`docs/IMPLEMENTATION_REPORT.md`](docs/IMPLEMENTATION_REPORT.md). These describe the intended
 design; [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) describes what is **actually implemented**.
+
+## Acknowledgments
+
+- **[VAYU](https://github.com/aksh08022006/vayu-aqi-hcho)** by [aksh08022006](https://github.com/aksh08022006)
+  — the base repository this project is built on. The core AQI/HCHO pipeline, CPCB AQI engine,
+  PHV/Gi* detection, and the deck.gl/MapLibre frontend architecture originate there.
 
 ## Acknowledgments
 
