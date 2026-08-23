@@ -42,9 +42,9 @@ export function Hero() {
         />
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-[1280px] px-6 md:px-16">
+      <div className="relative z-10 mx-auto w-full max-w-7xl px-6 md:px-16">
         <div className="hero-eyebrow eyebrow mb-6 flex items-center gap-3">
-          <span style={{ color: "var(--color-signal)" }}>VAYU</span>
+          <span style={{ color: "var(--color-signal)" }}>VayuDrishti</span>
           <span className="hairline h-px w-10 border-t" />
           <span>INDIA · ATMOSPHERIC OBSERVATION</span>
         </div>
@@ -52,7 +52,7 @@ export function Hero() {
           <span className="reveal-line hero-line"><span>The Air You Breathe</span></span>
           <span className="reveal-line hero-line"><span>Has a Story.</span></span>
         </h1>
-        <p className="hero-sub hero-fade lede mt-8 max-w-[520px] text-[clamp(1.05rem,1.6vw,1.4rem)]">
+        <p className="hero-sub hero-fade lede mt-8 max-w-130 text-[clamp(1.05rem,1.6vw,1.4rem)]">
           A satellite-derived decision-support prototype for surface AQI,
           HCHO/VOC hotspots, fire influence and atmospheric transport over India.
         </p>

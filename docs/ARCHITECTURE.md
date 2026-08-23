@@ -1,4 +1,4 @@
-# VAYU — Architecture & Code Walkthrough
+# VayuDrishti — Architecture & Code Walkthrough
 
 **Satellite-Derived Surface AQI & HCHO Hotspot Detection over India**
 *Full end-to-end technical analysis — backend logic to frontend.*
@@ -260,7 +260,7 @@ CV measures *extrapolation* to unmonitored regions — the honest, harder number
 
 ## 9. Frontend (root `app/` — Next.js 16 + React 19)
 
-A **multi-page scrollytelling site** ("VAYU"), not one long page. Stack: **deck.gl 9 + MapLibre**
+A **multi-page scrollytelling site** ("VayuDrishti"), not one long page. Stack: **deck.gl 9 + MapLibre**
 (no Mapbox token), **Anime.js v4** (not GSAP), **Lenis** smooth scroll, **Tailwind v4**.
 
 - **Routing** (`lib/chapters.ts`): `/` hub → `/problem` → `/method` → `/aqi` → `/hcho` →
@@ -357,7 +357,7 @@ export-path break, the AQI sub-index inter-band gap bug, and the `getis_ord` con
 
 ---
 
-*Generated as a code walkthrough of the VAYU / ISRO Surface-AQI + HCHO project.*
+*Generated as a code walkthrough of the VayuDrishti / ISRO Surface-AQI + HCHO project.*
 
 ## 14. Adapted project layer: K-Means and Isolation Forest
 

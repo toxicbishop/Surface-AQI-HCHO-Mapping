@@ -12,7 +12,19 @@ import sys
 
 _CONFIGURED = False
 
+
+def _safe_stderr_sink(message):
+    """Write loguru messages even when the Windows console uses cp1252."""
+    text = str(message)
+    try:
+        sys.stderr.write(text)
+    except UnicodeEncodeError:
+        sys.stderr.write(text.encode("ascii", errors="replace").decode("ascii"))
+    sys.stderr.flush()
+
+
 try:
+
     from loguru import logger as _loguru_logger
 
     _HAVE_LOGURU = True
@@ -29,8 +41,9 @@ def get_logger(name: str | None = None):
         if not _CONFIGURED:
             _loguru_logger.remove()
             _loguru_logger.add(
-                sys.stderr,
+                                _safe_stderr_sink,
                 level="INFO",
+
                 format=(
                     "<green>{time:HH:mm:ss}</green> | <level>{level: <8}</level> | "
                     "<cyan>{extra[ctx]}</cyan> - <level>{message}</level>"

@@ -33,9 +33,9 @@ export function Section({
       )}
       <div
         ref={ref}
-        className="relative mx-auto max-w-[1280px] px-6 py-[120px] md:px-16 md:py-[160px]"
+        className="relative mx-auto max-w-7xl px-6 py-30 md:px-16 md:py-40"
       >
-        <div className="max-w-[820px]">
+        <div className="max-w-205">
           <div className="eyebrow mb-5 flex items-center gap-3" data-reveal>
             <span>{index}</span>
             <span className="hairline h-px w-10 border-t" />
@@ -52,7 +52,7 @@ export function Section({
           </h2>
           {lede && (
             <p
-              className="lede mt-6 max-w-[640px] text-[clamp(1.05rem,1.6vw,1.35rem)]"
+              className="lede mt-6 max-w-160 text-[clamp(1.05rem,1.6vw,1.35rem)]"
               data-reveal
             >
               {lede}

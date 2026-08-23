@@ -357,7 +357,7 @@ export function HCHO() {
       title="Formaldehyde is the air turning reactive."
       lede="HCHO is a short-lived product of VOC oxidation — a fingerprint of emissions and biomass burning, and a precursor that helps build ground-level ozone.">
       <div ref={ref} className="mt-12">
-        <svg viewBox="0 0 720 130" className="w-full max-w-[760px]">
+        <svg viewBox="0 0 720 130" className="w-full max-w-190">
           <Node x={70} label="VOCs" />
           <Node x={300} label="HCHO" />
           <Node x={540} label="O₃" />
@@ -459,7 +459,7 @@ export function Biomass() {
           </button>
         ))}
       </div>
-      <p className="mt-5 max-w-[760px] text-[15px] leading-7" style={{ color: "var(--color-text-2)" }}>
+      <p className="mt-5 max-w-190 text-[15px] leading-7" style={{ color: "var(--color-text-2)" }}>
         {state.text}
       </p>
       <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -475,7 +475,7 @@ export function Biomass() {
       <div className="mt-6 grid grid-cols-1 gap-px overflow-hidden rounded-sm border sm:grid-cols-3"
         style={{ borderColor: "var(--line)", background: "var(--line)" }}>
         {state.metrics.map((m) => (
-          <div key={m} className="bg-[var(--color-ink-800)] p-4 data text-[12px]" style={{ color: "var(--color-text-2)" }}>
+          <div key={m} className="bg-ink-800 p-4 data text-[12px]" style={{ color: "var(--color-text-2)" }}>
             {m}
           </div>
         ))}
@@ -497,7 +497,7 @@ export function Transport() {
   return (
     <Section id="transport" index="04" eyebrow="The Movement"
       title="The air carries it.">
-      <p className="lede mt-6 max-w-[660px] text-[clamp(1.05rem,1.6vw,1.35rem)]" data-reveal>
+      <p className="lede mt-6 max-w-165 text-[clamp(1.05rem,1.6vw,1.35rem)]" data-reveal>
         Pollution does not stay where it is made. The orange path is a 48-hour transport
         hypothesis from Delhi; red points are fire pixels. Together they form an evidence
         chain, not a standalone proof.
@@ -505,7 +505,7 @@ export function Transport() {
       <div className="mt-8 grid grid-cols-1 gap-px overflow-hidden rounded-sm border md:grid-cols-3"
         style={{ borderColor: "var(--line)", background: "var(--line)" }}>
         {steps.map(([num, label, text]) => (
-          <div key={label} className="bg-[var(--color-ink-800)] p-5">
+          <div key={label} className="bg-ink-800 p-5">
             <div className="data text-[11px]" style={{ color: "var(--color-signal)" }}>{num}</div>
             <h3 className="serif mt-3 text-2xl">{label}</h3>
             <p className="mt-2 text-[14px] leading-6" style={{ color: "var(--color-text-2)" }}>{text}</p>
@@ -799,9 +799,9 @@ export function Footer() {
   ];
   return (
     <footer id="footer" className="relative border-t hairline">
-      <div className="mx-auto max-w-[1280px] px-6 py-20 md:px-16">
+      <div className="mx-auto max-w-7xl px-6 py-20 md:px-16">
         <div className="serif text-3xl">VAYU — India&apos;s Air, Observed</div>
-        <p className="mt-4 max-w-[760px] text-[15px] leading-7" style={{ color: "var(--color-text-2)" }}>
+        <p className="mt-4 max-w-190 text-[15px] leading-7" style={{ color: "var(--color-text-2)" }}>
           Built for Bharatiya Antariksh Hackathon 2026 · Challenge 03. Interactive prototype using sample
           geospatial layers, designed for Sentinel-5P, INSAT-3D, CPCB, ERA5/IMDAA and MODIS/VIIRS integration.
         </p>

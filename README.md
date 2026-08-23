@@ -1,4 +1,4 @@
-# VAYU — Satellite-Derived Surface AQI & HCHO Hotspot Detection over India
+# VayuDrishti — Satellite-Derived Surface AQI & HCHO Hotspot Detection over India
 
 **Development of Satellite-Derived Surface AQI and Identification of HCHO Hotspots over India
 using INSAT-3D / MAIAC, Sentinel-5P (TROPOMI), CPCB / OpenAQ and ERA5 Reanalysis Data.**
@@ -15,6 +15,9 @@ builds from the repo root.
 > **📄 Full code walkthrough:** see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (rendered:
 > [`docs/VAYU_Architecture.pdf`](docs/VAYU_Architecture.pdf)) for a complete, file-by-file
 > analysis of the model, backend logic, and frontend.
+
+![VayuDrishti Dashboard](public/dashboard.gif)
+*Interactive web dashboard visualizing satellite-derived surface AQI, HCHO hotspot detection, biomass burning dynamics, and atmospheric back-trajectories.*
 
 ---
 
@@ -166,7 +169,7 @@ outputs/         maps / figures / real_validation.json / demo_summary
 
 ## The web layer
 
-A Next.js 16 / React 19 scrollytelling site (VAYU) using **deck.gl + MapLibre** (no Mapbox token),
+A Next.js 16 / React 19 scrollytelling site (VayuDrishti) using **deck.gl + MapLibre** (no Mapbox token),
 **Anime.js** and **Lenis**. The map (`components/DeckMap.tsx`) rasterizes the gridded JSON into
 smooth atmospheric fields via a GPU `BitmapLayer`. It reads seven static files from `public/data/`
 produced by the pipelines: `aqi_frames.json`, `gas_grids.json`, `hcho_grid.json`, `hotspots.json`,
