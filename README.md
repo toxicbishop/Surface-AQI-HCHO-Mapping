@@ -12,12 +12,45 @@ Bharatiya Antariksh Hackathon 2026 · Challenge 03.
 and the Next.js web app (`app/`, `components/`, `lib/`, `public/`) live together here. The web app
 builds from the repo root.
 
-> **📄 Full code walkthrough:** see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (rendered:
+> **Full code walkthrough:** see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) (rendered:
 > [`docs/VAYU_Architecture.pdf`](docs/VAYU_Architecture.pdf)) for a complete, file-by-file
 > analysis of the model, backend logic, and frontend.
 
 ![VayuDrishti Dashboard](public/dashboard.gif)
 *Interactive web dashboard visualizing satellite-derived surface AQI, HCHO hotspot detection, biomass burning dynamics, and atmospheric back-trajectories.*
+
+---
+
+## Built on VAYU
+
+VayuDrishti is not a from-scratch system. It is an adapted and extended version of the original
+**VAYU** research pipeline and visualization architecture by **[aksh08022006](https://github.com/aksh08022006)**:
+[github.com/aksh08022006/vayu-aqi-hcho](https://github.com/aksh08022006/vayu-aqi-hcho).
+
+The Random Forest / regression-kriging pollutant models, the deterministic CPCB AQI engine, the
+RAPI index, PHV and Getis–Ord Gi* HCHO detection, source attribution, back-trajectory analysis,
+and the Next.js + MapLibre + deck.gl frontend architecture all originate from VAYU and remain the
+foundation of this project. Full credit to the original author for that groundwork —
+see [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for VAYU's original design.
+
+**What VayuDrishti adds on top of that foundation:**
+
+- **K-Means pollution zoning** (`src/isro_aqi/models/zones.py`) — auditable, silhouette-selected
+  cluster count, relative severity zones (Good / Moderate / Poor), explicitly labeled as
+  exploratory rather than official CPCB categories.
+- **Isolation Forest hotspot comparison** (`src/isro_aqi/hcho/isolation_forest.py`) — a
+  multivariate anomaly baseline compared against PHV/Gi* via overlap and Jaccard metrics, not a
+  replacement for either.
+- **A shared analysis-layer output contract** (`src/isro_aqi/analysis_layers.py`) with metadata
+  describing method, selected K, contamination, and whether output is synthetic or real.
+- **New frontend modes** for K-Means zones, Isolation Forest anomalies, and a PHV-vs-Isolation
+  Forest comparison view, plus explicit method disclaimers in the UI.
+- Project identity, documentation, package metadata, and a pnpm-standardized frontend build.
+
+In short: **official AQI and PHV/Gi* hotspot evidence remain primary and unchanged from VAYU**;
+K-Means and Isolation Forest are additional, clearly-labeled comparative views layered on top.
+This is described honestly as an extended derivative, not a claim of an independently invented
+AQI model.
 
 ---
 
@@ -184,6 +217,12 @@ The original 14-phase scientific blueprint (methodology, math, rationale) lives 
 [`docs/`](docs/) — `01_literature_review.md` … `14_explainability.md`, plus
 [`docs/IMPLEMENTATION_REPORT.md`](docs/IMPLEMENTATION_REPORT.md). These describe the intended
 design; [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) describes what is **actually implemented**.
+
+## Acknowledgments
+
+- **[VAYU](https://github.com/aksh08022006/vayu-aqi-hcho)** by [aksh08022006](https://github.com/aksh08022006)
+  — the base repository this project is built on. The core AQI/HCHO pipeline, CPCB AQI engine,
+  PHV/Gi* detection, and the deck.gl/MapLibre frontend architecture originate there.
 
 ## License
 
