@@ -26,9 +26,20 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import sys
 import warnings
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(ROOT / "src"))
+os.chdir(ROOT)
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(encoding="utf-8", errors="replace")
+    sys.stderr.reconfigure(encoding="utf-8", errors="replace")
 
 import numpy as np
+
 import pandas as pd
 import xarray as xr
 
@@ -163,8 +174,9 @@ def main():
     log.info("[10/10] transport: back-trajectory + fires-along-path")
     summary["transport"] = _transport(stack, fires)
 
-    with open("outputs/demo_summary.json", "w") as fh:
+    with open("outputs/demo_summary.json", "w", encoding="utf-8") as fh:
         json.dump(_jsonable(summary), fh, indent=2)
+
     _write_summary_md(summary)
     log.info("DEMO COMPLETE -> see outputs/ (maps, figures, demo_summary.md)")
 
@@ -483,7 +495,7 @@ def _write_summary_md(s):
                  "- `outputs/maps/` CPCB + RAPI + divergence + PM2.5 + HCHO + fire maps\n"
                  "- `outputs/figures/` wind rose\n"
                  "- `outputs/*.csv` hotspots, trajectory\n")
-    with open("outputs/demo_summary.md", "w") as fh:
+    with open("outputs/demo_summary.md", "w", encoding="utf-8") as fh:
         fh.write("\n".join(lines))
 
 

@@ -1,4 +1,4 @@
-# VAYU — Satellite-Derived Surface AQI & HCHO Hotspot Detection over India
+# VayuDrishti — Satellite-Derived Surface AQI & HCHO Hotspot Detection over India
 
 **Full title:** Development of Satellite-Derived Surface AQI and Identification of HCHO Hotspots over India using INSAT-3D, Sentinel-5P, CPCB and Reanalysis Data
 
@@ -38,7 +38,7 @@
 6. [What Is Implemented](#6-what-is-implemented)
 7. [Research Papers — What Was Taken and How](#7-research-papers--what-was-taken-and-how)
 8. [Scientific Results (Demo Run)](#8-scientific-results-demo-run)
-9. [Frontend — VAYU Web Experience](#9-frontend--vayu-web-experience)
+9. [Frontend — VayuDrishti Web Experience](#9-frontend--vayudrishti-web-experience)
 10. [How to Run](#10-how-to-run)
 11. [Repository Layout](#11-repository-layout)
 
@@ -46,7 +46,7 @@
 
 ## 1. What This Project Does
 
-VAYU is a research-grade system that turns satellite, reanalysis and ground-truth data into two scientific deliverables:
+VayuDrishti is a research-grade system that turns satellite, reanalysis and ground-truth data into two scientific deliverables:
 
 ### Objective 1 — Daily Surface AQI Maps of India
 Ground-level concentrations of **PM2.5, PM10, NO₂, SO₂, CO and O₃** are estimated across India using a per-pollutant **Random Forest** model (optionally a regression-kriging hybrid) that bridges satellite column measurements and CPCB ground stations. A **CNN-LSTM** is also implemented and validated, but is not on the map-generation path. These estimates are fed through the official **CPCB 2014 AQI engine** to produce daily, monthly and seasonal AQI maps over a 1 km India grid.
@@ -80,7 +80,7 @@ Satellite AQI mapping (Random Forest, per-pollutant)
   +  INSAT-3D as the intended AOD source (an ISRO sensor; MAIAC working substitute)
 ```
 
-Each reference paper contributes one or two of these; VAYU is the first system to combine them all over India.
+Each reference paper contributes one or two of these; VayuDrishti is the first system to combine them all over India.
 
 ### What makes each piece uniquely valuable
 
@@ -169,7 +169,7 @@ Each reference paper contributes one or two of these; VAYU is the first system t
 ║  CROSS-CUTTING                                                               ║
 ║                                                                              ║
 ║  Streamlit Dashboard             ──▶  Interactive explorer                  ║
-║  VAYU Web Frontend               ──▶  Documentary-style public interface    ║
+║  VayuDrishti Web Frontend               ──▶  Documentary-style public interface    ║
 ╚══════════════════════════════════════════════════════════════════════════════╝
 ```
 
@@ -467,7 +467,7 @@ The project is grounded in four anchor papers. Here is exactly what each contrib
 | O₃ | 0.472 | 8.5 µg/m³ | 0.467 | 0.26 |
 | CO | 0.615 | 0.43 mg/m³ | 0.605 | 0.58 |
 
-**Why SO₂/O₃ are weak:** This is exactly the difficulty the literature predicts. TROPOMI SO₂ is largely free-tropospheric and decoupled from surface; O₃ is photochemically produced and nonlinearly controlled by NOₓ/VOC. Both are flagged as advisory-confidence in VAYU's output.
+**Why SO₂/O₃ are weak:** This is exactly the difficulty the literature predicts. TROPOMI SO₂ is largely free-tropospheric and decoupled from surface; O₃ is photochemically produced and nonlinearly controlled by NOₓ/VOC. Both are flagged as advisory-confidence in VayuDrishti's output.
 
 ### PM2.5 cross-validation — the leakage lesson
 
@@ -537,11 +537,11 @@ The large random→spatial drop is the spatial-autocorrelation leakage the whole
 
 ---
 
-## 9. Frontend — VAYU Web Experience
+## 9. Frontend — VayuDrishti Web Experience
 
 ### Overview
 
-The frontend lives at the **repo root** (`app/`, `components/`, `lib/`, `public/`) — a **Next.js 16 + React 19 + Tailwind v4 + Anime.js v4** documentary-style web experience named **VAYU** (*वायु* = air/wind in Sanskrit). It is not a dashboard wearing a story; it is a documentary that behaves like a scientific instrument.
+The frontend lives at the **repo root** (`app/`, `components/`, `lib/`, `public/`) — a **Next.js 16 + React 19 + Tailwind v4 + Anime.js v4** documentary-style web experience named **VayuDrishti** (*वायु* = air/wind in Sanskrit). It is not a dashboard wearing a story; it is a documentary that behaves like a scientific instrument.
 
 ### Design philosophy — "The Instrument"
 
@@ -663,8 +663,9 @@ make dashboard     # Streamlit explorer at localhost:8501
 # Export pipeline output to web JSON
 python pipelines/export_web.py
 
-# Run the VAYU web app (at repo root)
-npm run dev   # → localhost:3000
+# Run the VayuDrishti web app (at repo root)
+pnpm dev      # → localhost:3000
+
 ```
 
 ---
@@ -673,7 +674,7 @@ npm run dev   # → localhost:3000
 
 ```
 vayu-aqi-hcho/                 ONE repo — Next.js app at root, Python alongside
-├── app/                       VAYU frontend routes (Next.js 16 App Router; 7 routes)
+├── app/                       VayuDrishti frontend routes (Next.js 16 App Router; 7 routes)
 ├── components/                DeckMap, Hero, sections, ChapterNav, …
 ├── lib/                       chapters.ts, india.ts, hooks
 ├── public/data/              pipeline-exported JSON (the data contract)
@@ -690,7 +691,7 @@ vayu-aqi-hcho/                 ONE repo — Next.js app at root, Python alongsid
 │   ├── 10_hcho_hotspots.md    PHV / Gi* / connected-component method detail
 │   ├── 13_transport_analysis  Back-trajectory math + implementation
 │   ├── ARCHITECTURE.md        End-to-end code walkthrough
-│   ├── FRONTEND_DESIGN.md     VAYU design bible (typography, motion, color)
+│   ├── FRONTEND_DESIGN.md     VayuDrishti design bible (typography, motion, color)
 │   └── IMPLEMENTATION_REPORT  Deep-research synthesis + demo results
 │
 ├── src/isro_aqi/              Python package (47 .py files)

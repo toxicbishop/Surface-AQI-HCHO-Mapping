@@ -104,7 +104,7 @@ export function Pipeline() {
           </g>
         ))}
       </svg>
-      <div className="hairline data mt-4 min-h-[44px] border-t pt-4 text-[13px]"
+      <div className="hairline data mt-4 min-h-11 border-t pt-4 text-[13px]"
         style={{ color: "var(--color-text-2)" }}>
         {active ? (
           <><span style={{ color: "var(--color-signal)" }}>{active.label}</span> — {active.sub}</>

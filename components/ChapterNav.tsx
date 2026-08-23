@@ -13,7 +13,7 @@ export function ChapterNav() {
     >
       <nav className="mx-auto flex max-w-6xl items-center gap-1 overflow-x-auto px-4 py-3">
         <Link href="/" className="serif mr-3 text-lg" style={{ color: "var(--color-signal)" }}>
-          VAYU
+          VayuDrishti
         </Link>
         {CHAPTERS.map((c) => {
           const active = path === c.href;

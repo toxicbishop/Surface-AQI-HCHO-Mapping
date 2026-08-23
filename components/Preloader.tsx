@@ -62,7 +62,7 @@ export function Preloader() {
   return (
     <div
       ref={root}
-      className="fixed inset-0 z-[100] flex flex-col items-center justify-center"
+      className="fixed inset-0 z-100 flex flex-col items-center justify-center"
       style={{ background: "var(--color-ink-900)" }}
     >
       <svg viewBox={`0 0 ${VB} ${VB}`} width="320" height="320" fill="none">
