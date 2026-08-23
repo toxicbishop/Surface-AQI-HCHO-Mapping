@@ -25,7 +25,7 @@ builds from the repo root.
 ## Built on VAYU
 
 VayuDrishti is not a from-scratch system. It is an adapted and extended version of the original
-**VAYU** research pipeline and visualization architecture by **[aksh08022006](https://github.com/akshhkaushik)**:
+**VAYU** research pipeline and visualization architecture by **[akshhkaushik](https://github.com/akshhkaushik)**:
 [github.com/akshhkaushik/vayu-aqi-hcho](https://github.com/akshhkaushik/vayu-aqi-hcho).
 
 The Random Forest / regression-kriging pollutant models, the deterministic CPCB AQI engine, the
