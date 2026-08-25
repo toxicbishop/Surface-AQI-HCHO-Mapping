@@ -132,7 +132,7 @@ pip install -e . && pip install -r requirements.txt
 
 # Try it immediately — synthetic India data, no credentials needed
 make demo                 # -> outputs/: AQI maps, HCHO hotspots, figures, demo_summary.md
-make demo-fast             # quick smoke version
+make demo-fast             # quick smoke version; also emits zones, anomalies, and metadata
 
 # For real data
 make check-ingest          # readiness check: packages, GEE/CDS/FIRMS creds, config
@@ -149,7 +149,7 @@ make fetch-web                  # real TROPOMI/MODIS/ERA5 layers -> public/data/
 | `make fetch-web` | `fetch_real_web.py` | Real satellite observation layers → web |
 | `make check-ingest` | `check_ingest.py` | Pre-flight readiness check |
 | `make ingest/preprocess/database/train` | `01–04_*.py` | Numbered phase pipeline (05–07 are stubs) |
-| `make test` / `make lint` | pytest / ruff | Deterministic cores (AQI, PHV, Gi*) are unit-tested |
+| `make test` / `make lint` | pytest / ruff | Deterministic AQI, PHV, Gi*, K-Means, and Isolation Forest checks |
 
 The numbered `pipelines/05_07_*.py` are intentionally stubs — real AQI/HCHO/transport computation
 runs inside `run_demo.py`, `run_real.py`, and `fetch_real_web.py`.
@@ -164,7 +164,7 @@ runs inside `run_demo.py`, `run_real.py`, and `fetch_real_web.py`.
 app/               routes: / problem method aqi hcho model impact
 components/        DeckMap (deck.gl + MapLibre), sections, IndiaField, Pipeline, …
 lib/               chapters, india geo utils, reveal hooks
-public/data/       the JSON/GeoJSON layers the frontend reads
+public/data/       core plus comparative JSON/GeoJSON layers the frontend reads
 
 # Python research pipeline
 config/            YAML config — AOI, dates, dataset asset IDs, AQI breakpoints, regions
@@ -176,11 +176,13 @@ src/isro_aqi/
   features/        engineered predictors (FNR, cyclical DOY, interactions)
   models/          RF, XGBoost, CNN, CNN-LSTM, regression-kriging hybrid, training loop
   aqi/             CPCB AQI sub-index + RAPI entropy engine
-  hcho/            PHV, Getis-Ord Gi*, source attribution, transport
+  hcho/          PHV, Getis-Ord Gi*, Isolation Forest, source attribution, transport
+
   viz/             maps & publication figures
   synthetic.py     physically-plausible synthetic India (powers `make demo`)
 pipelines/         CLI entry points — run_demo, run_real, fetch_real_web, export_web, 01–07
-tests/             unit tests — AQI engine, PHV, Gi* (deterministic → fully tested)
+tests/             unit tests — AQI engine, PHV, Gi*, K-Means, Isolation Forest
+
 outputs/           maps / figures / real_validation.json / demo_summary
 ```
 
@@ -190,9 +192,10 @@ outputs/           maps / figures / real_validation.json / demo_summary
 - *Local:* CPCB/OpenAQ station data, database assembly, model training, AQI computation, HCHO
   analysis, figures, JSON export.
 
-**The web layer** reads seven static files from `public/data/`: `aqi_frames.json`,
+**The web layer** reads core and comparative static files from `public/data/`: `aqi_frames.json`,
 `gas_grids.json`, `hcho_grid.json`, `hotspots.json`, `fires.json`, `trajectory.json`,
-`india.geojson`. Product overview: [`docs/WEB_OVERVIEW.md`](docs/WEB_OVERVIEW.md).
+`india.geojson`, `zone_cells.json`, `isolation_hotspots.json`, and `analysis_metadata.json`.
+Product overview: [`docs/WEB_OVERVIEW.md`](docs/WEB_OVERVIEW.md).
 
 ---
 
