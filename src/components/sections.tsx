@@ -634,10 +634,10 @@ export function Evidence() {
 export function Model() {
   const ref = useDrawOnEnter<HTMLDivElement>(".draw");
   const stages = [
-    { x: 90, label: "Satellite", sub: "AOD + gases + met" },
-    { x: 290, label: "Features", sub: "collocate + engineer" },
-    { x: 490, label: "Random Forest", sub: "per-pollutant (deployed)" },
-    { x: 690, label: "AQI", sub: "surface prediction" },
+    { x: 100, width: 140, label: "Satellite", sub: "AOD + gases + met" },
+    { x: 320, width: 154, label: "Features", sub: "collocate + engineer" },
+    { x: 550, width: 164, label: "Random Forest", sub: "per-pollutant (deployed)" },
+    { x: 770, width: 140, label: "AQI", sub: "surface prediction" },
   ];
   useEffect(() => {
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -653,19 +653,24 @@ export function Model() {
     <Section id="model" index="05" eyebrow="The Engine" variant="paper"
       title="How the model reads the sky."
       lede="The operational predictor is a per-pollutant Random Forest (optionally a regression-kriging hybrid). It learns surface concentrations directly from the daily satellite + meteorology stack and feeds the AQI maps.">
-      <div ref={ref} className="mt-12">
-        <svg viewBox="0 0 800 150" className="w-full"
+      <div ref={ref} className="mt-12 overflow-x-auto">
+        <svg viewBox="0 0 880 150" className="w-full min-w-[700px]"
           role="img" aria-label="Deployed model flow: satellite stack, to engineered features, to a per-pollutant Random Forest, to surface AQI.">
-          {stages.slice(0, -1).map((s, i) => (
-            <path key={i} className="draw" d={`M ${s.x + 60} 60 L ${stages[i + 1].x - 60} 60`}
-              stroke="var(--color-signal-dim)" strokeWidth="1.4" fill="none" markerEnd="url(#m)" />
-          ))}
+          {stages.slice(0, -1).map((s, i) => {
+            const next = stages[i + 1];
+            const startX = s.x + s.width / 2;
+            const endX = next.x - next.width / 2;
+            return (
+              <path key={i} className="draw" d={`M ${startX} 60 L ${endX} 60`}
+                stroke="var(--color-signal-dim)" strokeWidth="1.4" fill="none" markerEnd="url(#m)" />
+            );
+          })}
           <circle className="model-sig" r="3.5" fill="var(--color-signal)"
-            style={{ offsetPath: `path('M 150 60 L 690 60')`, offsetDistance: "0%" } as React.CSSProperties} />
+            style={{ offsetPath: `path('M ${stages[0].x + stages[0].width / 2} 60 L ${stages[stages.length - 1].x} 60')`, offsetDistance: "0%" } as React.CSSProperties} />
           {stages.map((s) => (
             <g key={s.label}>
-              <rect x={s.x - 60} y="35" width="120" height="50" rx="5" fill="var(--color-paper)" stroke="var(--color-signal-dim)" strokeWidth="1.2" />
-              <text x={s.x} y="58" textAnchor="middle" className="data" fontSize="14" fill="var(--color-paper-ink)">{s.label}</text>
+              <rect x={s.x - s.width / 2} y="32" width={s.width} height="56" rx="6" fill="var(--color-paper)" stroke="var(--color-signal-dim)" strokeWidth="1.2" />
+              <text x={s.x} y="56" textAnchor="middle" className="data" fontSize="13.5" fontWeight="500" fill="var(--color-paper-ink)">{s.label}</text>
               <text x={s.x} y="74" textAnchor="middle" className="data" fontSize="10" fill="#8a857a">{s.sub}</text>
             </g>
           ))}

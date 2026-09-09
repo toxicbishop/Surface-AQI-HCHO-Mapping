@@ -206,7 +206,7 @@ footer .confidence-low {
 
 /* reveal initial state (JS sets final) */
 [data-reveal] { opacity: 0; }
-.reveal-line { display: block; overflow: hidden; }
+.reveal-line { display: block; overflow: hidden; padding-bottom: 0.18em; margin-bottom: -0.18em; }
 .reveal-line > span { display: block; transform: translateY(110%); }
 
 /* ---- light theme: paper-primary reading surface; observation sections stay dark ---- */

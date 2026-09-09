@@ -1,7 +1,8 @@
 .PHONY: help setup auth demo demo-fast check-ingest real fetch-web ingest preprocess database train aqi hcho transport dashboard test lint clean
 
 CONFIG ?= config/config.yaml
-PY     := python3
+# Fall back to `python` on Windows / environments where `python3` alias is absent
+PY     ?= python
 
 help:
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | \
