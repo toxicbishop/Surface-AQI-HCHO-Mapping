@@ -800,7 +800,7 @@ export function Footer() {
   return (
     <footer id="footer" className="relative border-t hairline">
       <div className="mx-auto max-w-7xl px-6 py-20 md:px-16">
-        <div className="serif text-3xl">VAYU — India&apos;s Air, Observed</div>
+        <div className="serif text-3xl">VayuDrishti</div>
         <p className="mt-4 max-w-190 text-[15px] leading-7" style={{ color: "var(--color-text-2)" }}>
           Built for Bharatiya Antariksh Hackathon 2026 · Challenge 03. Interactive prototype using sample
           geospatial layers, designed for Sentinel-5P, INSAT-3D, CPCB, ERA5/IMDAA and MODIS/VIIRS integration.
@@ -825,8 +825,7 @@ export function Footer() {
           ))}
         </div>
         <div className="hairline mt-16 flex flex-wrap items-center justify-between gap-4 border-t pt-6 data text-[11px]" style={{ color: "var(--color-text-3)" }}>
-          <a href="https://github.com/aksh08022006/vayu-aqi-hcho" target="_blank" rel="noreferrer">github.com/aksh08022006/vayu-aqi-hcho</a>
-          <span>Team: VAYU · sample-data preview build</span>
+          <a href="https://github.com/toxicbishop/Surface-AQI-HCHO-Mapping" target="_blank" rel="noreferrer">github.com/toxicbishop/Surface-AQI-HCHO-Mapping</a>
         </div>
       </div>
     </footer>
