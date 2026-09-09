@@ -126,33 +126,37 @@ This project uses **pnpm** exclusively — not npm.
 <summary><strong>Run the research pipeline</strong></summary>
 
 ```bash
-# Install
-pip install -e . && pip install -r requirements.txt
-#   or: conda env create -f environment.yml && conda activate isro-aqi && pip install -e .
+# Setup virtual environment & dependencies
+python -m venv .venv
+source .venv/bin/activate       # On Linux/macOS
+# or: .venv\Scripts\activate    # On Windows PowerShell / Git Bash
+
+pip install -e .
+pip install -r requirements.txt
 
 # Try it immediately — synthetic India data, no credentials needed
 make demo                 # -> outputs/: AQI maps, HCHO hotspots, figures, demo_summary.md
-make demo-fast             # quick smoke version; also emits zones, anomalies, and metadata
+make demo-fast            # quick smoke version; also emits zones, anomalies, and metadata
 
 # For real data
-make check-ingest          # readiness check: packages, GEE/CDS/FIRMS creds, config
-earthengine authenticate   # one-time GEE auth
+make check-ingest         # readiness check: packages, GEE/CDS/FIRMS creds, config
+earthengine authenticate  # one-time GEE auth
 
 OPENAQ_API_KEY=... make real   # real CPCB/OpenAQ-validated AQI + dual CV
-make fetch-web                  # real TROPOMI/MODIS/ERA5 layers -> public/data/*.json
+make fetch-web                 # real TROPOMI/MODIS/ERA5 layers -> public/data/*.json
 ```
 
-| Target | Runs | Purpose |
+| Target | Command | Purpose |
 |---|---|---|
-| `make demo` | `run_demo.py` | Full synthetic end-to-end, no credentials |
-| `make real` | `run_real.py` | Real OpenAQ/CPCB-validated AQI + dual CV |
-| `make fetch-web` | `fetch_real_web.py` | Real satellite observation layers → web |
-| `make check-ingest` | `check_ingest.py` | Pre-flight readiness check |
-| `make ingest/preprocess/database/train` | `01–04_*.py` | Numbered phase pipeline (05–07 are stubs) |
-| `make test` / `make lint` | pytest / ruff | Deterministic AQI, PHV, Gi*, K-Means, and Isolation Forest checks |
+| `make demo` | `python pipelines/run_demo.py` | Full synthetic end-to-end simulation, no credentials required |
+| `make demo-fast` | `python pipelines/run_demo.py --fast` | Quick smoke run; generates comparative layers & JSON exports |
+| `make real` | `python pipelines/run_real.py` | Real OpenAQ/CPCB-validated AQI + dual CV |
+| `make fetch-web` | `python pipelines/fetch_real_web.py` | Real satellite observation layers → web |
+| `make check-ingest` | `python pipelines/check_ingest.py` | Pre-flight readiness check for APIs and credentials |
+| `make dashboard` | `streamlit run dashboard/app.py` | Streamlit interactive research dashboard |
+| `make test` / `make lint` | `pytest -q` / `ruff check` | Deterministic AQI, PHV, Gi*, K-Means, and Isolation Forest test suite |
 
-The numbered `pipelines/05_07_*.py` are intentionally stubs — real AQI/HCHO/transport computation
-runs inside `run_demo.py`, `run_real.py`, and `fetch_real_web.py`.
+*Note on cross-platform execution:* The `Makefile` automatically invokes `python` (overridable with `make demo PY=python3`), functioning cleanly across Windows (Git Bash/PowerShell), macOS, and Linux.
 </details>
 
 ---
@@ -160,51 +164,46 @@ runs inside `run_demo.py`, `run_real.py`, and `fetch_real_web.py`.
 ## Structure
 
 ```
-# Web app (Next.js 16, deploys from repo root)
-app/               routes: / problem method aqi hcho model impact
-components/        DeckMap (deck.gl + MapLibre), sections, IndiaField, Pipeline, …
-lib/               chapters, india geo utils, reveal hooks
-public/data/       core plus comparative JSON/GeoJSON layers the frontend reads
+# Web Application (Next.js 16 + React 19 + Turbopack)
+src/app/           routes: / aqi case-study hcho impact method model problem
+src/components/    DeckMap (deck.gl + MapLibre), sections, IndiaField, Pipeline, ...
+src/lib/           chapters, geo utilities, cell context, animation hooks
+public/data/       GeoJSON and precomputed analysis grids (AQI, HCHO, zones, fires)
 
-# Python research pipeline
-config/            YAML config — AOI, dates, dataset asset IDs, AQI breakpoints, regions
-docs/              ARCHITECTURE.md (+ PDF), WEB_OVERVIEW.md, per-phase research blueprint
+# Python Research Pipeline & Models
+config/            YAML configurations (AOI, dates, assets, AQI breakpoints, regions)
+docs/              ARCHITECTURE.md, 15-phase blueprint (00-15_*.md), references
 src/isro_aqi/
   ingestion/       GEE (Sentinel-5P, ERA5, MODIS/VIIRS, WorldCover, SRTM) + CPCB/OpenAQ + INSAT
   preprocessing/   regrid, QA filter, AOD gap-fill, NO2 calibration, collocation, temporal
   database/        unified (date, lat, lon) schema + parquet builder
   features/        engineered predictors (FNR, cyclical DOY, interactions)
-  models/          RF, XGBoost, CNN, CNN-LSTM, regression-kriging hybrid, training loop
+  models/          RF, XGBoost, CNN, CNN-LSTM, regression-kriging hybrid, K-Means zoning
   aqi/             CPCB AQI sub-index + RAPI entropy engine
-  hcho/          PHV, Getis-Ord Gi*, Isolation Forest, source attribution, transport
-
+  hcho/            PHV, Getis-Ord Gi*, Isolation Forest, source attribution, back-trajectory
   viz/             maps & publication figures
-  synthetic.py     physically-plausible synthetic India (powers `make demo`)
+  synthetic.py     physically-plausible synthetic India generator
 pipelines/         CLI entry points — run_demo, run_real, fetch_real_web, export_web, 01–07
 tests/             unit tests — AQI engine, PHV, Gi*, K-Means, Isolation Forest
-
-outputs/           maps / figures / real_validation.json / demo_summary
+outputs/           generated maps, figures, real_validation.json, demo_summary.md
 ```
 
-**Compute split:**
-- *Server-side (Google Earth Engine):* Sentinel-5P, ERA5(-Land), MAIAC AOD, MODIS/VIIRS fire,
-  ESA WorldCover, SRTM — filtered, reduced, exported as analysis-ready rasters/tables.
-- *Local:* CPCB/OpenAQ station data, database assembly, model training, AQI computation, HCHO
-  analysis, figures, JSON export.
+**Compute Split:**
+- *Server-side (Google Earth Engine):* Sentinel-5P, ERA5(-Land), MAIAC AOD, MODIS/VIIRS fire, ESA WorldCover, SRTM — filtered, reduced, exported as analysis-ready rasters/tables.
+- *Local Machine:* CPCB/OpenAQ station data, database assembly, model training, AQI computation, HCHO analysis, figures, JSON export.
 
-**The web layer** reads core and comparative static files from `public/data/`: `aqi_frames.json`,
-`gas_grids.json`, `hcho_grid.json`, `hotspots.json`, `fires.json`, `trajectory.json`,
-`india.geojson`, `zone_cells.json`, `isolation_hotspots.json`, and `analysis_metadata.json`.
-Product overview: [`docs/WEB_OVERVIEW.md`](docs/WEB_OVERVIEW.md).
+**Web Data Contract:**
+The web layer consumes static layers from `public/data/`: `aqi_frames.json`, `gas_grids.json`, `hcho_grid.json`, `hotspots.json`, `fires.json`, `delhi_backtrajectory.json`, `india.geojson`, `zone_cells.json`, `isolation_hotspots.json`, and `analysis_metadata.json`.
 
 ---
 
 ## Documentation
 
-The original 14-phase scientific blueprint lives in [`docs/`](docs/) —
-`01_literature_review.md` … `14_explainability.md`, plus
-[`docs/IMPLEMENTATION_REPORT.md`](docs/IMPLEMENTATION_REPORT.md) for intended design, and
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for what's **actually implemented**.
+The scientific blueprint and engineering documentation live in [`docs/`](docs/):
+- [`docs/00_overview.md`](docs/00_overview.md) — Master overview and roadmap.
+- [`docs/01_literature_review.md`](docs/01_literature_review.md) … [`docs/15_dashboard.md`](docs/15_dashboard.md) — 15-phase scientific implementation blueprint.
+- [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) — Exhaustive architecture, actual vs. showcased models, and code walkthrough.
+- [`docs/references.md`](docs/references.md) — Full scientific bibliography and anchor paper citations.
 
 ---
 
@@ -214,21 +213,19 @@ VayuDrishti is an adapted and extended version of **[VAYU](https://github.com/ak
 by **[akshhkaushik](https://github.com/akshhkaushik)**. Full credit to the original author for the
 foundation this project is built on.
 
-**Inherited from VAYU, unchanged:**
+**Inherited from VAYU:**
 Random Forest / regression-kriging pollutant models · deterministic CPCB AQI engine · RAPI index
-· PHV and Getis-Ord Gi* HCHO detection · source attribution · back-trajectory analysis · the
-Next.js + MapLibre + deck.gl frontend architecture.
+· PHV and Getis-Ord Gi* HCHO detection · source attribution · back-trajectory analysis · core Next.js + MapLibre + deck.gl visualization architecture.
 
 **Added in this fork:**
-- K-Means pollution zoning (`src/isro_aqi/models/zones.py`) — silhouette-selected K, relative severity zones, explicitly not official CPCB categories
-- Isolation Forest hotspot comparison (`src/isro_aqi/hcho/isolation_forest.py`) — multivariate anomaly baseline compared against PHV/Gi* via Jaccard overlap, not a replacement
-- Shared analysis-layer output contract (`src/isro_aqi/analysis_layers.py`) with method/data-status metadata
-- New frontend modes: K-Means zones, Isolation Forest anomalies, PHV-vs-Isolation Forest comparison, with explicit method disclaimers in the UI
-- Project identity, documentation, package metadata, pnpm-standardized frontend build
+- **K-Means pollution zoning** (`src/isro_aqi/models/zones.py`) — silhouette-selected K, relative severity zones, explicitly not official CPCB categories.
+- **Isolation Forest hotspot comparison** (`src/isro_aqi/hcho/isolation_forest.py`) — multivariate anomaly baseline compared against PHV/Gi* via Jaccard overlap.
+- **Shared analysis-layer output contract** (`src/isro_aqi/analysis_layers.py`) with method/data-status metadata.
+- **New frontend modes & UX enhancements**: K-Means zones, Isolation Forest anomalies, PHV-vs-Isolation Forest comparison, refined typography, and responsive model workflow diagrams.
+- **Modernized dependency & build stack**: pnpm-standardized Next.js 16 Turbopack pipeline, cross-platform Makefile, and updated MapLibre v6 integration.
 
 Official AQI and PHV/Gi* hotspot evidence remain primary and unchanged from VAYU. K-Means and
-Isolation Forest are additional, clearly-labeled comparative views layered on top — this is an
-extended derivative, not an independently invented AQI model.
+Isolation Forest are additional, clearly-labeled comparative views layered on top.
 
 ---
 
