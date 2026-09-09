@@ -8,6 +8,7 @@ export const CHAPTERS: Chapter[] = [
   { href: "/hcho", num: "04", label: "HCHO Hotspots", desc: "VOC anomalies, biomass burning and wind transport." },
   { href: "/model", num: "05", label: "Model & Accuracy", desc: "The Random Forest predictor, its validation and benchmarks." },
   { href: "/impact", num: "06", label: "Impact", desc: "Applications, policy actions and what comes next." },
+  { href: "/case-study", num: "CS", label: "Case Study", desc: "Punjab–Haryana–Delhi: the fire-smoke evidence chain." },
 ];
 
 export function chapterIndex(href: string): number {

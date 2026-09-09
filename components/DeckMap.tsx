@@ -4,8 +4,11 @@ import maplibregl from "maplibre-gl";
 import { MapboxOverlay } from "@deck.gl/mapbox";
 import { ScatterplotLayer, PathLayer, PolygonLayer, BitmapLayer } from "@deck.gl/layers";
 import { AQI_STOPS } from "@/lib/india";
+import { ProvenancePanel } from "./ProvenancePanel";
+import type { LayerKind } from "./ProvenancePanel";
+import { useCellSelectContext } from "@/lib/CellSelectContext";
 
-type Mode = "aqi" | "gas" | "hotspots" | "transport" | "zones" | "isolation";
+type Mode = LayerKind;
 type RGB = [number, number, number];
 type LayerStatus = "loading" | "ready" | "partial" | "error";
 type Hotspot = {
@@ -274,8 +277,69 @@ function HotspotCard({ hotspot }: { hotspot: Hotspot | null }) {
   );
 }
 
+// Cross-layer lookup: given lon/lat, gathers all available values from loaded data.
+function buildCellInfo(lon: number, lat: number, d: Record<string, any>) {
+  const RADIUS = 0.4; // half-cell match radius (degrees)
+  const near = (a: number, b: number) => Math.abs(a - b) <= RADIUS;
+
+  // AQI — use last loaded frame, CPCB column 2
+  let aqi: number | undefined;
+  const aqiFrames = d.aqi?.frames;
+  if (Array.isArray(aqiFrames) && aqiFrames.length > 0) {
+    const frame = aqiFrames[aqiFrames.length - 1];
+    const cell = (frame.cells as number[][])?.find((c) => near(c[0], lon) && near(c[1], lat));
+    if (cell) aqi = cell[2];
+  }
+
+  // HCHO column (normalised)
+  let hcho: number | undefined;
+  const hchoGrid = d.hcho as number[][] | undefined;
+  if (Array.isArray(hchoGrid)) {
+    const cell = hchoGrid.find((c) => near(c[0], lon) && near(c[1], lat));
+    if (cell) hcho = cell[2];
+  }
+
+  // K-Means zone
+  let zoneLabel: string | undefined, zoneId: number | undefined;
+  const zoneCells = d.zones?.cells as { lon: number; lat: number; zone_id: number; zone_label: string }[] | undefined;
+  if (Array.isArray(zoneCells)) {
+    const z = zoneCells.find((c) => near(c.lon, lon) && near(c.lat, lat));
+    if (z) { zoneLabel = z.zone_label; zoneId = z.zone_id; }
+  }
+
+  // Isolation Forest score
+  let isolationScore: number | undefined;
+  const isoCells = d.iso?.cells as { lon: number; lat: number; isolation_score: number }[] | undefined;
+  if (Array.isArray(isoCells)) {
+    const iz = isoCells.find((c) => near(c.lon, lon) && near(c.lat, lat));
+    if (iz) isolationScore = iz.isolation_score;
+  }
+
+  // Nearby fires (within 2°)
+  let nearbyFireCount: number | undefined, nearbyFRP: number | undefined;
+  const fires = d.fires as number[][] | undefined;
+  if (Array.isArray(fires)) {
+    const nearby = fires.filter((f) => Math.abs(f[0] - lon) <= 2 && Math.abs(f[1] - lat) <= 2);
+    nearbyFireCount = nearby.length;
+    nearbyFRP = nearby.reduce((s, f) => s + (f[2] ?? 0), 0);
+  }
+
+  // Source attribution (from nearest hotspot)
+  let source: string | undefined;
+  const hotspots = d.hotspots as { lon: number; lat: number; source: string }[] | undefined;
+  if (Array.isArray(hotspots)) {
+    const closest = hotspots.reduce<{ dist: number; src: string } | null>((best, h) => {
+      const dist = (h.lon - lon) ** 2 + (h.lat - lat) ** 2;
+      return !best || dist < best.dist ? { dist, src: h.source } : best;
+    }, null);
+    if (closest && closest.dist < 4) source = closest.src;
+  }
+
+  return { lon, lat, aqi, hcho, zoneLabel, zoneId, isolationScore, nearbyFireCount, nearbyFRP, source };
+}
+
 export function DeckMap({
-  mode, frame = 0, gas = "hcho", height = 560, onReadout, aqiKind = "cpcb", onFrameCount,
+  mode, frame = 0, gas = "hcho", height = 560, onReadout, aqiKind = "cpcb", onFrameCount, onCellSelect,
 }: {
   mode: Mode;
   frame?: number;
@@ -284,12 +348,16 @@ export function DeckMap({
   onReadout?: (s: string | null) => void;
   aqiKind?: "cpcb" | "rapi";   // which AQI index the 'aqi' mode colours by
   onFrameCount?: (n: number) => void;   // reports how many timelapse frames the AQI data actually has
+  onCellSelect?: (info: { lon: number; lat: number; aqi?: number; hcho?: number; zoneLabel?: string; zoneId?: number; isolationScore?: number; source?: string; nearbyFireCount?: number; nearbyFRP?: number }) => void;
 }) {
   const wrap = useRef<HTMLDivElement>(null);
   const map = useRef<maplibregl.Map | null>(null);
   const overlay = useRef<MapboxOverlay | null>(null);
   const data = useRef<Record<string, unknown>>({});
   const props = useRef({ mode, frame, gas, aqiKind });
+  const contextCellSelect = useCellSelectContext();
+  const onCellSelectRef = useRef(onCellSelect ?? contextCellSelect ?? undefined);
+  onCellSelectRef.current = onCellSelect ?? contextCellSelect ?? undefined;
   const [layerStatus, setLayerStatus] = useState<LayerStatus>("loading");
   const [layerMessage, setLayerMessage] = useState("Loading atmospheric layer...");
   const [selectedHotspot, setSelectedHotspot] = useState<Hotspot | null>(null);
@@ -322,6 +390,12 @@ export function DeckMap({
         layers.push(new PolygonLayer({
           id, data: pickData ?? visPts, getPolygon: (x: number[]) => cellPoly(x[0], x[1]),
           getFillColor: [0, 0, 0, 0], stroked: false, filled: true, pickable: true,
+          onClick: ({ object }: { object?: number[] }) => {
+            if (!object) return false;
+            const lon = object[0], lat = object[1];
+            onCellSelectRef.current?.(buildCellInfo(lon, lat, data.current));
+            return true;
+          },
         }));
     };
 
@@ -486,8 +560,10 @@ export function DeckMap({
   return (
     <div className="relative overflow-hidden rounded-sm" style={{ width: "100%", height }}>
       <div ref={wrap} style={{ width: "100%", height: "100%" }} />
+      {/* Provenance panel — always shown, collapsible */}
+      {layerStatus === "ready" && <ProvenancePanel mode={mode} />}
       {layerStatus !== "ready" && (
-        <div className="pointer-events-none absolute left-3 top-3 z-10 rounded-sm border px-3 py-2 data text-[11px]"
+        <div className="pointer-events-none absolute left-3 top-3 z-12 rounded-sm border px-3 py-2 data text-[11px]"
           style={{
             background: "rgba(14,18,23,0.9)",
             borderColor: layerStatus === "error" ? "rgba(255,122,69,0.5)" : "rgba(255,255,255,0.12)",
