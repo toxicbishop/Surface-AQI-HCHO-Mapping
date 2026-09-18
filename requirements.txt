@@ -19,7 +19,7 @@ h3>=4.5.0                 # hex grid indexing (optional aggregation)
 regionmask>=0.13.0
 
 # Earth Engine (server-side data access)
-earthengine-api>=1.7.42
+earthengine-api>=1.7.43
 geemap>=0.37.2
 eemont>=2025.7.1             # convenience for S5P/ERA5 collection handling
 
@@ -58,10 +58,10 @@ streamlit-folium>=0.26.2
 # Config / utilities / quality
 pyyaml>=6.0.3
 pydantic>=2.13.5
-tqdm>=4.70.0
+tqdm>=4.70.1
 loguru>=0.7.3
 typer>=0.27.2              # CLI for pipeline scripts
 
 # Dev / test
 pytest>=9.1.1
-ruff>=0.16.6
+ruff>=0.16.7
