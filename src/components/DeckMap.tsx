@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
-import maplibregl from "maplibre-gl";
+import * as maplibregl from "maplibre-gl";
 import { MapboxOverlay } from "@deck.gl/mapbox";
 import { ScatterplotLayer, PathLayer, PolygonLayer, BitmapLayer } from "@deck.gl/layers";
 import { AQI_STOPS } from "@/lib/india";

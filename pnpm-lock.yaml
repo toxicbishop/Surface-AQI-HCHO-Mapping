@@ -24,11 +24,11 @@ importers:
         specifier: ^1.3.23
         version: 1.3.26(react@19.3.0)
       maplibre-gl:
-        specifier: ^6.9.1
-        version: 6.9.1
+        specifier: ^6.4.1
+        version: 6.8.0
       next:
-        specifier: ^16.3.5
-        version: 16.3.5(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0)
+        specifier: ^16.3.4
+        version: 16.3.4(@types/node@26.5.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8)
       react:
         specifier: 19.3.0
         version: 19.3.0
@@ -41,7 +41,7 @@ importers:
         version: 4.3.3
       '@types/node':
         specifier: ^26
-        version: 26.5.1
+        version: 26.5.0
       '@types/react':
         specifier: ^19
         version: 19.3.0
@@ -53,7 +53,7 @@ importers:
         version: 8.5.28
       sharp:
         specifier: ^0.35.4
-        version: 0.35.4(@types/node@26.5.1)
+        version: 0.35.4(@types/node@26.5.0)
       tailwindcss:
         specifier: ^4
         version: 4.3.3
@@ -342,8 +342,8 @@ packages:
   '@maplibre/geojson-vt@6.1.1':
     resolution: {integrity: sha512-FVMOcmSP/yqol45t7StApEyTL5/vmqBCuFhH9n+fFuINenhaX+YgHHIt1yJ86S8kln3uJLcMvmEU2cfn6E2eCQ==}
 
-  '@maplibre/maplibre-gl-style-spec@26.4.3':
-    resolution: {integrity: sha512-rNjb1pPYtdF3aHziWv9v8D1Y8C+sYZtzBX0vwjitPanQi5IuhMvmoHN/GoiLwuY/gssLkJ2/IG6C25Wn77ZdJg==}
+  '@maplibre/maplibre-gl-style-spec@26.4.1':
+    resolution: {integrity: sha512-I/qcIKVFHFSg1Meu/eqHrkSTjIez0gCsSaK56TNPutM3TkE61aSq6F1cZ4Kg4KiNs3cpViLtubDjfyRcQCdEJQ==}
     hasBin: true
 
   '@maplibre/mlt@1.3.0':
@@ -532,8 +532,8 @@ packages:
   '@types/node@25.9.5':
     resolution: {integrity: sha512-OScDchr2fwuUmWdf4kZ9h7PcJiYDVInhJizG/biAq3cAvqwYktuy/TYGGdZNMtNTFUP7rnb0NU4TUdm82kt4Rg==}
 
-  '@types/node@26.5.1':
-    resolution: {integrity: sha512-CzNm2FezW4VR/LjG6yUdiEgLE/rAQ9Slj5gCu/C2VrdcW7I0ahNZ8DRbHT7zOZ6r3ONgd/bsQIeSaoDGrd1C6g==}
+  '@types/node@26.5.0':
+    resolution: {integrity: sha512-dVSGpriSoCgz8WnDNTuSSuSv1PC/ALXihO4ulRZt7Md8k9mlbdin3lGOcDE8SnWOgf513ByWlXd7BK4azmyg/A==}
 
   '@types/offscreencanvas@2019.7.3':
     resolution: {integrity: sha512-ieXiYmgSRXUDeOntE1InxjWyvEelZGP63M+cGuquuRLuIKKT1osnkXjxev9B7d1nXSug5vpunx+gNlbVxMlC9A==}
@@ -828,8 +828,8 @@ packages:
   magic-string@0.30.21:
     resolution: {integrity: sha512-vd2F4YUyEXKGcLHoq+TEyCjxueSeHnFxyyjNp80yg0XV4vUhnDer/lvvlqM/arB5bXQN5K2/3oinyCRyx8T2CQ==}
 
-  maplibre-gl@6.9.1:
-    resolution: {integrity: sha512-piG2jNSq7crSTzj67UWDlTaxDjWvhFpfubZUuaofmaMcQKWw+kYn7mCfeh6S/Egr8+q8prBWcDqEaa6DdIQ6pw==}
+  maplibre-gl@6.8.0:
+    resolution: {integrity: sha512-+ZkjKTodsVLY0ewQThvXRxXQsclcsSgOm5LlnrBM3G8AloMJKt6Haw8mY4xrOl8T0WMqH6DTYjktZ9zGQXZd4w==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
 
   minimist@1.2.8:
@@ -1252,7 +1252,7 @@ snapshots:
     dependencies:
       kdbush: 4.1.0
 
-  '@maplibre/maplibre-gl-style-spec@26.4.3':
+  '@maplibre/maplibre-gl-style-spec@26.4.1':
     dependencies:
       '@mapbox/jsonlint-lines-primitives': 2.0.3
       '@mapbox/unitbezier': 1.0.0
@@ -1400,7 +1400,7 @@ snapshots:
     dependencies:
       undici-types: 7.24.6
 
-  '@types/node@26.5.1':
+  '@types/node@26.5.0':
     dependencies:
       undici-types: 8.9.0
 
@@ -1579,15 +1579,15 @@ snapshots:
     dependencies:
       '@jridgewell/sourcemap-codec': 1.6.0
 
-  maplibre-gl@6.9.1:
+  maplibre-gl@6.8.0:
     dependencies:
       '@mapbox/point-geometry': 1.1.0
       '@mapbox/tiny-sdf': 2.2.0
       '@mapbox/unitbezier': 1.0.0
       '@mapbox/vector-tile': 3.0.0
       '@maplibre/geojson-vt': 6.1.1
-      '@maplibre/maplibre-gl-style-spec': 26.4.3
-      '@maplibre/mlt': 1.3.0
+      '@maplibre/maplibre-gl-style-spec': 26.4.1
+      '@maplibre/mlt': 1.2.1
       '@maplibre/vt-pbf': 4.3.2
       '@types/geojson': 7946.0.16
       bidi-js: 1.1.0
@@ -1608,9 +1608,7 @@ snapshots:
 
   nanoid@3.3.18: {}
 
-  nanoid@3.3.19: {}
-
-  next@16.3.5(@types/node@26.5.1)(react-dom@19.3.0(react@19.3.0))(react@19.3.0):
+  next@16.3.4(@types/node@26.5.0)(react-dom@19.2.8(react@19.2.8))(react@19.2.8):
     dependencies:
       '@next/env': 16.3.5
       '@swc/helpers': 0.5.23
@@ -1621,15 +1619,15 @@ snapshots:
       react-dom: 19.3.0(react@19.3.0)
       styled-jsx: 5.1.6(react@19.3.0)
     optionalDependencies:
-      '@next/swc-darwin-arm64': 16.3.5
-      '@next/swc-darwin-x64': 16.3.5
-      '@next/swc-linux-arm64-gnu': 16.3.5
-      '@next/swc-linux-arm64-musl': 16.3.5
-      '@next/swc-linux-x64-gnu': 16.3.5
-      '@next/swc-linux-x64-musl': 16.3.5
-      '@next/swc-win32-arm64-msvc': 16.3.5
-      '@next/swc-win32-x64-msvc': 16.3.5
-      sharp: 0.35.4(@types/node@26.5.1)
+      '@next/swc-darwin-arm64': 16.3.4
+      '@next/swc-darwin-x64': 16.3.4
+      '@next/swc-linux-arm64-gnu': 16.3.4
+      '@next/swc-linux-arm64-musl': 16.3.4
+      '@next/swc-linux-x64-gnu': 16.3.4
+      '@next/swc-linux-x64-musl': 16.3.4
+      '@next/swc-win32-arm64-msvc': 16.3.4
+      '@next/swc-win32-x64-msvc': 16.3.4
+      sharp: 0.35.4(@types/node@26.5.0)
     transitivePeerDependencies:
       - '@babel/core'
       - '@types/node'
@@ -1676,7 +1674,7 @@ snapshots:
 
   semver@7.8.5: {}
 
-  sharp@0.35.4(@types/node@26.5.1):
+  sharp@0.35.4(@types/node@26.5.0):
     dependencies:
       '@img/colour': 1.1.0
       detect-libc: 2.1.2
@@ -1707,7 +1705,7 @@ snapshots:
       '@img/sharp-win32-arm64': 0.35.4
       '@img/sharp-win32-ia32': 0.35.4
       '@img/sharp-win32-x64': 0.35.4
-      '@types/node': 26.5.1
+      '@types/node': 26.5.0
 
   source-map-js@1.2.1: {}
 

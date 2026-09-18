@@ -57,7 +57,10 @@ export function ProvenancePanel({ mode }: { mode: LayerKind }) {
 
   useEffect(() => {
     fetch("/data/analysis_metadata.json")
-      .then((r) => r.json())
+      .then((r) => {
+        if (!r.ok) throw new Error(`${r.status}`);
+        return r.json();
+      })
       .then(setMeta)
       .catch(() => null);
   }, []);

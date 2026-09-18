@@ -7,7 +7,7 @@
 
 ## 0. One unified repository
 
-Everything now lives in a **single repository: `aksh08022006/vayu-aqi-hcho`** (`main`). The Next.js
+Everything now lives in a **single repository: `toxicbishop/Surface-AQI-HCHO-Mapping`** (`main`). The Next.js
 web app sits at the repo root (`app/`, `components/`, `lib/`, `public/`) and the Python research
 pipeline lives alongside it (`src/`, `pipelines/`, `config/`, `docs/`, `tests/`).
 
